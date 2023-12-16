@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::{Token, TokenType};
+    use crate::{Lexer, Token, TokenType};
 
     #[test]
     fn test_next_token() {
@@ -43,7 +43,7 @@ mod tests {
                 Literal: "".to_string(),
             },
         ];
-        let lexer = New(input);
+        let lexer = Lexer::new(input.to_string());
         for (index, tt) in tests.into_iter().enumerate() {
             let tok = lexer.NextToken();
             assert_eq!(tok.Type, tests[index].Type);
