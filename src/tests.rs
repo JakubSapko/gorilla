@@ -40,12 +40,12 @@ mod tests {
             },
             Token {
                 Type: TokenType::EOF,
-                Literal: "".to_string(),
+                Literal: "\0".to_string(),
             },
         ];
-        let lexer = Lexer::new(input.to_string());
-        for (index, tt) in tests.into_iter().enumerate() {
-            let tok = lexer.NextToken();
+        let mut lexer = Lexer::new(input.to_string());
+        for (index, tt) in tests.clone().into_iter().enumerate() {
+            let tok = lexer.next_token();
             assert_eq!(tok.Type, tests[index].Type);
             assert_eq!(tok.Literal, tests[index].Literal);
         }

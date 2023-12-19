@@ -1,4 +1,6 @@
 mod tests;
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum TokenType {
     ILLEGAL,
     EOF,
@@ -23,6 +25,7 @@ enum TokenType {
     LET,
 }
 
+#[derive(Debug, Clone)]
 struct Token {
     Literal: String,
     Type: TokenType,
@@ -57,47 +60,27 @@ impl Lexer {
 
     fn next_token(&mut self) -> Token {
         let tok = match self.ch {
-            b'=' => Token {
-                Type: TokenType::ASSIGN,
-                Literal: self.ch.to_string(),
-            },
-            b';' => Token {
-                Type: TokenType::SEMICOLON,
-                Literal: self.ch.to_string(),
-            },
-            b'(' => Token {
-                Type: TokenType::LPAREN,
-                Literal: self.ch.to_string(),
-            },
-            b')' => Token {
-                Type: TokenType::RPAREN,
-                Literal: self.ch.to_string(),
-            },
-            b',' => Token {
-                Type: TokenType::COMMA,
-                Literal: self.ch.to_string(),
-            },
-            b'+' => Token {
-                Type: TokenType::PLUS,
-                Literal: self.ch.to_string(),
-            },
-            b'{' => Token {
-                Type: TokenType::LBRACE,
-                Literal: self.ch.to_string(),
-            },
-            b'}' => Token {
-                Type: TokenType::RBRACE,
-                Literal: self.ch.to_string(),
-            },
-            0 => Token {
-                Type: TokenType::EOF,
-                Literal: "".to_string(),
-            },
+            b'=' => new_token(TokenType::ASSIGN, self.ch),
+            b';' => new_token(TokenType::SEMICOLON, self.ch),
+            b'(' => new_token(TokenType::LPAREN, self.ch),
+            b')' => new_token(TokenType::RPAREN, self.ch),
+            b',' => new_token(TokenType::COMMA, self.ch),
+            b'+' => new_token(TokenType::PLUS, self.ch),
+            b'{' => new_token(TokenType::LBRACE, self.ch),
+            b'}' => new_token(TokenType::RBRACE, self.ch),
+            b'\0' => new_token(TokenType::EOF, self.ch),
             _ => panic!("Token not recognized"),
         };
         self.read_char();
         return tok;
     }
+}
+
+fn new_token(token_type: TokenType, ch: u8) -> Token {
+    return Token {
+        Type: token_type,
+        Literal: char::from(ch).to_string(),
+    };
 }
 
 fn main() {
