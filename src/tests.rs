@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::{Lexer, Token, TokenType};
-
+    use crate::token::token::{Lexer, Token, TokenType};
     #[test]
     fn test_next_token() {
         let input = "let five = 5;
