@@ -36,7 +36,7 @@ struct Lexer {
     input: String,
     position: usize,      // current position in input (points to current char)
     read_position: usize, // current reading position in in input (after current char)
-    ch: u8,               // current char unde examination
+    ch: char,             // current char unde examination
 }
 
 impl Lexer {
@@ -51,10 +51,9 @@ impl Lexer {
 
     fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
-            self.ch = b'\0';
+            self.ch = '\0';
         } else {
-            println!("{:?}", self.input.chars().nth(self.read_position).unwrap());
-            self.ch = self.input.chars().nth(self.read_position).unwrap() as u8;
+            self.ch = self.input.chars().nth(self.read_position).unwrap();
         }
         self.position = self.read_position;
         self.read_position += 1;
@@ -85,17 +84,16 @@ impl Lexer {
 
     fn next_token(&mut self) -> Token {
         self.skip_whitespace();
-        println!("{:?}", self.ch);
         let tok = match self.ch {
-            b'=' => new_token(TokenType::ASSIGN, char::from(self.ch).to_string()),
-            b';' => new_token(TokenType::SEMICOLON, char::from(self.ch).to_string()),
-            b'(' => new_token(TokenType::LPAREN, char::from(self.ch).to_string()),
-            b')' => new_token(TokenType::RPAREN, char::from(self.ch).to_string()),
-            b',' => new_token(TokenType::COMMA, char::from(self.ch).to_string()),
-            b'+' => new_token(TokenType::PLUS, char::from(self.ch).to_string()),
-            b'{' => new_token(TokenType::LBRACE, char::from(self.ch).to_string()),
-            b'}' => new_token(TokenType::RBRACE, char::from(self.ch).to_string()),
-            b'\0' => new_token(TokenType::EOF, char::from(self.ch).to_string()),
+            '=' => new_token(TokenType::ASSIGN, char::from(self.ch).to_string()),
+            ';' => new_token(TokenType::SEMICOLON, char::from(self.ch).to_string()),
+            '(' => new_token(TokenType::LPAREN, char::from(self.ch).to_string()),
+            ')' => new_token(TokenType::RPAREN, char::from(self.ch).to_string()),
+            ',' => new_token(TokenType::COMMA, char::from(self.ch).to_string()),
+            '+' => new_token(TokenType::PLUS, char::from(self.ch).to_string()),
+            '{' => new_token(TokenType::LBRACE, char::from(self.ch).to_string()),
+            '}' => new_token(TokenType::RBRACE, char::from(self.ch).to_string()),
+            '\0' => new_token(TokenType::EOF, char::from(self.ch).to_string()),
             _ => {
                 if is_letter(self.ch) {
                     let lit = self.read_identifier();
@@ -111,8 +109,8 @@ impl Lexer {
     }
 }
 
-fn is_letter(ch: u8) -> bool {
-    return b'a' <= ch && ch <= b'z' || b'A' <= ch && ch <= b'Z' || ch == b'_';
+fn is_letter(ch: char) -> bool {
+    return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_';
 }
 
 fn new_token(token_type: TokenType, lit: String) -> Token {
