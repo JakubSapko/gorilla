@@ -17,6 +17,8 @@ enum TokenType {
     SLASH,
     LT,
     GT,
+    EQ,
+    NOT_EQ,
 
     //delimiters
     COMMA,
@@ -29,6 +31,11 @@ enum TokenType {
     //keywords
     FUNCTION,
     LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN,
 }
 
 #[derive(Debug, Clone)]
@@ -85,6 +92,11 @@ impl Lexer {
         let tok_type = match lit.as_str() {
             "fn" => TokenType::FUNCTION,
             "let" => TokenType::LET,
+            "true" => TokenType::TRUE,
+            "false" => TokenType::FALSE,
+            "if" => TokenType::IF,
+            "else" => TokenType::ELSE,
+            "return" => TokenType::RETURN,
             _ => TokenType::IDENT,
         };
         return tok_type;
@@ -96,16 +108,42 @@ impl Lexer {
         }
     }
 
+    fn peek_char(&mut self) -> u8 {
+        if self.read_position >= self.input.len() {
+            return 0;
+        } else {
+            return self.input.as_bytes()[self.read_position];
+        }
+    }
+
     fn next_token(&mut self) -> Token {
         self.skip_whitespace();
         let tok = match self.ch {
             '-' => new_token(TokenType::MINUS, char::from(self.ch).to_string()),
-            '!' => new_token(TokenType::BANG, char::from(self.ch).to_string()),
+            '!' => {
+                if self.peek_char() == b'=' {
+                    let ch = self.ch;
+                    self.read_char();
+                    let lit = format!("{}{}", ch, self.ch);
+                    new_token(TokenType::NOT_EQ, lit)
+                } else {
+                    new_token(TokenType::BANG, char::from(self.ch).to_string())
+                }
+            }
             '/' => new_token(TokenType::SLASH, char::from(self.ch).to_string()),
             '*' => new_token(TokenType::ASTERISK, char::from(self.ch).to_string()),
             '<' => new_token(TokenType::LT, char::from(self.ch).to_string()),
             '>' => new_token(TokenType::GT, char::from(self.ch).to_string()),
-            '=' => new_token(TokenType::ASSIGN, char::from(self.ch).to_string()),
+            '=' => {
+                if self.peek_char() == b'=' {
+                    let ch = self.ch;
+                    self.read_char();
+                    let lit = format!("{}{}", ch, self.ch);
+                    new_token(TokenType::EQ, lit)
+                } else {
+                    new_token(TokenType::ASSIGN, char::from(self.ch).to_string())
+                }
+            }
             ';' => new_token(TokenType::SEMICOLON, char::from(self.ch).to_string()),
             '(' => new_token(TokenType::LPAREN, char::from(self.ch).to_string()),
             ')' => new_token(TokenType::RPAREN, char::from(self.ch).to_string()),

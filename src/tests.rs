@@ -12,6 +12,15 @@ mod tests {
         let result = add(five, ten);
         !-/*5;
         5 < 10 > 5;
+
+        if (5 < 10) {
+            return true;
+        } else {
+            return false;
+        }
+
+        10 == 10;
+        10 != 9;
         ";
         let tests: Vec<Token> = vec![
             Token {
@@ -201,6 +210,106 @@ mod tests {
             Token {
                 Type: TokenType::INT,
                 Literal: "5".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::IF,
+                Literal: "if".to_string(),
+            },
+            Token {
+                Type: TokenType::LPAREN,
+                Literal: "(".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "5".to_string(),
+            },
+            Token {
+                Type: TokenType::LT,
+                Literal: "<".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "10".to_string(),
+            },
+            Token {
+                Type: TokenType::RPAREN,
+                Literal: ")".to_string(),
+            },
+            Token {
+                Type: TokenType::LBRACE,
+                Literal: "{".to_string(),
+            },
+            Token {
+                Type: TokenType::RETURN,
+                Literal: "return".to_string(),
+            },
+            Token {
+                Type: TokenType::TRUE,
+                Literal: "true".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::RBRACE,
+                Literal: "}".to_string(),
+            },
+            Token {
+                Type: TokenType::ELSE,
+                Literal: "else".to_string(),
+            },
+            Token {
+                Type: TokenType::LBRACE,
+                Literal: "{".to_string(),
+            },
+            Token {
+                Type: TokenType::RETURN,
+                Literal: "return".to_string(),
+            },
+            Token {
+                Type: TokenType::FALSE,
+                Literal: "false".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::RBRACE,
+                Literal: "}".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "10".to_string(),
+            },
+            Token {
+                Type: TokenType::EQ,
+                Literal: "==".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "10".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "10".to_string(),
+            },
+            Token {
+                Type: TokenType::NOT_EQ,
+                Literal: "!=".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "9".to_string(),
             },
             Token {
                 Type: TokenType::SEMICOLON,
