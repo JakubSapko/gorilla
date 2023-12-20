@@ -67,6 +67,14 @@ impl Lexer {
         return self.input[position..self.position].to_string();
     }
 
+    fn read_number(&mut self) -> String {
+        let position = self.position;
+        while is_digit(self.ch) {
+            self.read_char();
+        }
+        return self.input[position..self.position].to_string();
+    }
+
     fn determine_token_type(&mut self, lit: &String) -> TokenType {
         let tok_type = match lit.as_str() {
             "fn" => TokenType::FUNCTION,
@@ -99,6 +107,10 @@ impl Lexer {
                     let lit = self.read_identifier();
                     let tok_type = self.determine_token_type(&lit);
                     return new_token(tok_type, lit);
+                } else if is_digit(self.ch) {
+                    let tok_type = TokenType::INT;
+                    let lit = self.read_number();
+                    return new_token(tok_type, lit);
                 } else {
                     return new_token(TokenType::ILLEGAL, self.ch.to_string());
                 }
@@ -107,6 +119,10 @@ impl Lexer {
         self.read_char();
         return tok;
     }
+}
+
+fn is_digit(ch: char) -> bool {
+    return '0' <= ch && ch <= '9';
 }
 
 fn is_letter(ch: char) -> bool {
