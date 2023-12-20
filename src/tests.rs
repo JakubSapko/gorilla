@@ -10,6 +10,8 @@ mod tests {
             x + y;
         };
         let result = add(five, ten);
+        !-/*5;
+        5 < 10 > 5;
         ";
         let tests: Vec<Token> = vec![
             Token {
@@ -151,6 +153,54 @@ mod tests {
             Token {
                 Type: TokenType::RPAREN,
                 Literal: ")".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::BANG,
+                Literal: "!".to_string(),
+            },
+            Token {
+                Type: TokenType::MINUS,
+                Literal: "-".to_string(),
+            },
+            Token {
+                Type: TokenType::SLASH,
+                Literal: "/".to_string(),
+            },
+            Token {
+                Type: TokenType::ASTERISK,
+                Literal: "*".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "5".to_string(),
+            },
+            Token {
+                Type: TokenType::SEMICOLON,
+                Literal: ";".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "5".to_string(),
+            },
+            Token {
+                Type: TokenType::LT,
+                Literal: "<".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "10".to_string(),
+            },
+            Token {
+                Type: TokenType::GT,
+                Literal: ">".to_string(),
+            },
+            Token {
+                Type: TokenType::INT,
+                Literal: "5".to_string(),
             },
             Token {
                 Type: TokenType::SEMICOLON,

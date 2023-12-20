@@ -11,6 +11,12 @@ enum TokenType {
     //operators
     ASSIGN,
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
+    LT,
+    GT,
 
     //delimiters
     COMMA,
@@ -93,6 +99,12 @@ impl Lexer {
     fn next_token(&mut self) -> Token {
         self.skip_whitespace();
         let tok = match self.ch {
+            '-' => new_token(TokenType::MINUS, char::from(self.ch).to_string()),
+            '!' => new_token(TokenType::BANG, char::from(self.ch).to_string()),
+            '/' => new_token(TokenType::SLASH, char::from(self.ch).to_string()),
+            '*' => new_token(TokenType::ASTERISK, char::from(self.ch).to_string()),
+            '<' => new_token(TokenType::LT, char::from(self.ch).to_string()),
+            '>' => new_token(TokenType::GT, char::from(self.ch).to_string()),
             '=' => new_token(TokenType::ASSIGN, char::from(self.ch).to_string()),
             ';' => new_token(TokenType::SEMICOLON, char::from(self.ch).to_string()),
             '(' => new_token(TokenType::LPAREN, char::from(self.ch).to_string()),
