@@ -1,5 +1,6 @@
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum TokenType {
+    #[default]
     ILLEGAL,
     EOF,
     //identifiers + literals
@@ -36,7 +37,7 @@ pub enum TokenType {
     RETURN,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Token {
     pub Literal: String,
     pub Type: TokenType,
