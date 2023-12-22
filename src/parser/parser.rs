@@ -3,22 +3,24 @@ use crate::{
     token::token::{Lexer, Token},
 };
 
-struct Parser<'a> {
+pub struct Parser<'a> {
     l: &'a mut Lexer,
     cur_token: Token,
     peek_token: Token,
 }
 
 impl<'a> Parser<'a> {
-    fn next_token(&mut self) {
+    pub fn next_token(&mut self) {
         self.cur_token = self.peek_token.clone();
         self.peek_token = self.l.next_token();
     }
 
-    fn parse_program() {}
+    pub fn parse_program(&self) -> Option<Program> {
+        return None::<Program>;
+    }
 }
 
-fn new(lexer: &mut Lexer) -> Parser {
+pub fn new_parser(lexer: &mut Lexer) -> Parser {
     let mut p = Parser {
         l: lexer,
         cur_token: Default::default(),

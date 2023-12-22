@@ -1,5 +1,6 @@
 #[cfg(test)]
 mod tests {
+    use crate::parser::parser::new_parser;
     use crate::token::token::{Lexer, Token, TokenType};
     #[test]
     fn test_next_token() {
@@ -324,6 +325,25 @@ mod tests {
             let tok = lexer.next_token();
             assert_eq!(tok.Type, tests[index].Type);
             assert_eq!(tok.Literal, r#tests[index].Literal);
+        }
+    }
+    #[test]
+    fn test_let_statemnts() {
+        let input = "
+                let x = 5;
+                let y = 10;
+                let foobar = 838383;
+            ";
+        let mut lex = Lexer::new(input.to_string());
+        let parser = new_parser(&mut lex);
+        let program = parser.parse_program();
+        match program {
+            None => panic!("parse_program returned null"),
+            Some(p) => {
+                if p.Statements.len() != 3 {
+                    panic!("ups");
+                }
+            }
         }
     }
 }
