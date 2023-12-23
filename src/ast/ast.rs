@@ -16,10 +16,10 @@ pub struct Program {
     pub Statements: Vec<Box<dyn Statement>>,
 }
 
-struct LetStatement<'a> {
-    Token: Token, //token.LET
-    Name: &'a Identifier,
-    Value: Box<dyn Expression>,
+pub struct LetStatement<'a> {
+    pub Token: Token, //token.LET
+    pub Name: &'a Identifier,
+    pub Value: Box<dyn Expression>,
 }
 
 impl Node for LetStatement<'_> {
@@ -32,9 +32,10 @@ impl Statement for LetStatement<'_> {
     fn statement_node(&self) {}
 }
 
-struct Identifier {
-    Token: Token,
-    Value: String,
+#[derive(Debug)]
+pub struct Identifier {
+    pub Token: Token,
+    pub Value: String,
 }
 
 impl Node for Identifier {

@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod tests {
+    use crate::ast::ast::{LetStatement, Node, Statement};
     use crate::parser::parser::new_parser;
     use crate::token::token::{Lexer, Token, TokenType};
+    use std::any::Any;
     #[test]
     fn test_next_token() {
         let input = "let five = 5;
@@ -337,13 +339,60 @@ mod tests {
         let mut lex = Lexer::new(input.to_string());
         let parser = new_parser(&mut lex);
         let program = parser.parse_program();
-        match program {
+        let p = match program {
             None => panic!("parse_program returned null"),
             Some(p) => {
                 if p.Statements.len() != 3 {
                     panic!("ups");
                 }
+                p
+            }
+        };
+        struct TestLet {
+            expected_identifier: String,
+        }
+        let tests = vec![
+            TestLet {
+                expected_identifier: "x".to_string(),
+            },
+            TestLet {
+                expected_identifier: "y".to_string(),
+            },
+            TestLet {
+                expected_identifier: "foobar".to_string(),
+            },
+        ];
+        for (i, tt) in tests.into_iter().enumerate() {
+            if !test_let_statement(&p.Statements[i], tt.expected_identifier) {
+                panic!("Test failed");
             }
         }
+        ()
+    }
+
+    fn test_let_statement(stmt: &Box<dyn Statement>, ident: String) -> bool {
+        if stmt.TokenLiteral() != "let" {
+            eprintln!("stmt.TokenLiteral not 'let', got {:?}", stmt.TokenLiteral());
+            return false;
+        }
+        let stmt = &*stmt as &dyn Any;
+        if let Some(let_stmt) = stmt.downcast_ref::<LetStatement>() {
+            if let_stmt.Name.Value != ident {
+                eprintln!("stmt.Name.Value not {}, got {}", ident, let_stmt.Name.Value);
+                return false;
+            }
+
+            if let_stmt.Name.TokenLiteral() != ident {
+                eprintln!(
+                    "stmt.Name.TokenLiteral not {}, got {}",
+                    ident,
+                    let_stmt.Name.TokenLiteral()
+                );
+                return false;
+            }
+            return true;
+        }
+        eprintln!("stmt not LetStatement, got {:?}", stmt);
+        return false;
     }
 }
