@@ -12,6 +12,7 @@ pub trait Expression: Node {
     fn expression_node(&self);
 }
 
+#[derive(Default)]
 pub struct Program {
     pub Statements: Vec<Box<dyn Statement>>,
 }
