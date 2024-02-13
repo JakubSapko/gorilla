@@ -1,7 +1,7 @@
 use std::default;
 
 use crate::{
-    ast::ast::{Expression, Identifier, LetStatement, Program, Statement},
+    ast::ast::{Expression, Identifier, LetStatement, Program, Statement, StatementNode},
     token::token::{Lexer, Token, TokenType},
 };
 
@@ -17,23 +17,33 @@ impl<'a> Parser<'a> {
         self.peek_token = self.l.next_token();
     }
 
-    pub fn parse_program(&mut self) {
+    pub fn parse_program(&mut self) -> Program {
         let mut program = Program {
-            ..Default::default()
+            Statements: Vec::new(), // The type is now Vec<Box<dyn StatementNode>>
         };
         while self.cur_token.Type != TokenType::EOF {
             let stmt = self.parse_statement();
+            if let Some(s) = stmt {
+                program.Statements.push(s);
+            }
+            self.next_token();
         }
+        return program;
     }
 
-    pub fn parse_statement(&mut self) -> Option<Box<dyn Statement>> {
+    pub fn parse_statement(&mut self) -> Option<Statement> {
         match self.cur_token.Type {
-            TokenType::LET => return self.parse_let_statement(),
+            TokenType::LET => {
+                if let Some(stmt) = self.parse_let_statement() {
+                    return Some(Statement::Let(stmt));
+                }
+                return None;
+            }
             _ => return None,
         }
     }
 
-    pub fn parse_let_statement(&mut self) -> Option<Box<dyn Statement>> {
+    pub fn parse_let_statement(&mut self) -> Option<LetStatement> {
         let tok = &self.cur_token.clone();
         if !self.expect_peek(TokenType::IDENT) {
             return None;
@@ -59,10 +69,10 @@ impl<'a> Parser<'a> {
         });
         let stmt = LetStatement {
             Token: tok.clone(),
-            Name: Box::leak(Box::new(id)),
+            Name: id,
             Value: val,
         };
-        return Some(Box::new(stmt));
+        Some(stmt)
     }
 
     fn cur_token_is(&self, t: TokenType) -> bool {

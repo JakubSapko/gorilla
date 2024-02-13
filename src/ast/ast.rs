@@ -1,11 +1,30 @@
+use std::fmt::Debug;
+
 use crate::token::token::Token;
 
 pub trait Node {
     fn TokenLiteral(&self) -> String;
 }
 
-pub trait Statement: Node {
+#[derive(Debug)]
+pub enum Statement {
+    Let(LetStatement),
+}
+
+pub trait StatementNode {
     fn statement_node(&self);
+}
+
+impl StatementNode for Statement {
+    fn statement_node(&self) {}
+}
+
+impl Node for Statement {
+    fn TokenLiteral(&self) -> String {
+        match self {
+            Statement::Let(l) => l.TokenLiteral(),
+        }
+    }
 }
 
 pub trait Expression: Node {
@@ -14,23 +33,33 @@ pub trait Expression: Node {
 
 #[derive(Default)]
 pub struct Program {
-    pub Statements: Vec<Box<dyn Statement>>,
+    pub Statements: Vec<Statement>,
 }
 
-pub struct LetStatement<'a> {
+pub struct LetStatement {
     pub Token: Token, //token.LET
-    pub Name: &'a Identifier,
+    pub Name: Identifier,
     pub Value: Box<dyn Expression>,
 }
 
-impl Node for LetStatement<'_> {
-    fn TokenLiteral(&self) -> String {
-        return self.Token.Literal.to_string();
+impl Debug for LetStatement {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "LetStatement {{ Token: {:?}, Name: {:?}, Value: }}",
+            self.Token, self.Name
+        )
     }
 }
 
-impl Statement for LetStatement<'_> {
+impl StatementNode for LetStatement {
     fn statement_node(&self) {}
+}
+
+impl Node for LetStatement {
+    fn TokenLiteral(&self) -> String {
+        return self.Token.Literal.to_string();
+    }
 }
 
 #[derive(Debug)]
