@@ -9,9 +9,10 @@ pub struct Parser<'a> {
     l: &'a mut Lexer,
     cur_token: Token,
     peek_token: Token,
+    pub errors: Vec<String>,
 }
 
-impl<'a> Parser<'a> {
+impl Parser<'_> {
     pub fn next_token(&mut self) {
         self.cur_token = self.peek_token.clone();
         self.peek_token = self.l.next_token();
@@ -88,8 +89,17 @@ impl<'a> Parser<'a> {
             self.next_token();
             return true;
         } else {
+            self.peek_error(t);
             return false;
         }
+    }
+
+    pub fn peek_error(&mut self, t: TokenType) {
+        let msg = format!(
+            "expected next token to be {:?}, got {:?} instead",
+            t, self.peek_token.Type
+        );
+        self.errors.push(msg);
     }
 }
 
@@ -98,6 +108,7 @@ pub fn new_parser(lexer: &mut Lexer) -> Parser {
         l: lexer,
         cur_token: Default::default(),
         peek_token: Default::default(),
+        errors: Vec::new(),
     };
     p.next_token();
     p.next_token();

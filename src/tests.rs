@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::ast::{LetStatement, Node, Statement};
-    use crate::parser::parser::new_parser;
+    use crate::parser::parser::{new_parser, Parser};
     use crate::token::token::{Lexer, Token, TokenType};
     use std::any::Any;
     #[test]
@@ -340,6 +340,8 @@ mod tests {
         let mut parser = new_parser(&mut lex);
         let program = parser.parse_program();
 
+        check_parser_errors(&parser);
+
         struct TestLet {
             expected_identifier: String,
         }
@@ -360,6 +362,18 @@ mod tests {
             }
         }
         ()
+    }
+
+    fn check_parser_errors(parser: &Parser) {
+        let errors = &parser.errors;
+        if errors.len() == 0 {
+            return;
+        }
+        eprintln!("parser has {} errors", errors.len());
+        for error in errors {
+            eprintln!("parser error: {}", error);
+        }
+        panic!("parser has errors");
     }
 
     fn test_let_statement(stmt: &Statement, ident: String) -> bool {
