@@ -1,9 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::ast::{LetStatement, Node, Statement};
+    use crate::ast::ast::Statement;
     use crate::parser::parser::{new_parser, Parser};
     use crate::token::token::{Lexer, Token, TokenType};
-    use std::any::Any;
     #[test]
     fn test_next_token() {
         let input = "let five = 5;
@@ -401,6 +400,46 @@ mod tests {
             _ => {
                 eprintln!("stmt not LetStatement, got {:?}", stmt);
                 return false;
+            }
+        }
+    }
+
+    #[test]
+    fn test_return_statements() {
+        let input = "
+                return 5;
+                return 10;
+                return 993322;
+            ";
+        let mut lex = Lexer::new(input.to_string());
+        let mut parser = new_parser(&mut lex);
+        let program = parser.parse_program();
+        check_parser_errors(&parser);
+        let tests = vec!["5", "10", "993322"];
+        for (i, tt) in tests.into_iter().enumerate() {
+            let stmt = &program.Statements[i];
+            match stmt {
+                Statement::Return(stmt) => {
+                    if stmt.TokenLiteral() != "return" {
+                        eprintln!(
+                            "stmt.TokenLiteral not 'return', got {:?}",
+                            stmt.TokenLiteral()
+                        );
+                        return;
+                    }
+                    if stmt.ReturnValue.TokenLiteral() != tt {
+                        eprintln!(
+                            "stmt.ReturnValue.Value not {}, got {}",
+                            tt,
+                            stmt.ReturnValue.TokenLiteral()
+                        );
+                        return;
+                    }
+                }
+                _ => {
+                    eprintln!("stmt not ReturnStatement, got {:?}", stmt);
+                    return;
+                }
             }
         }
     }

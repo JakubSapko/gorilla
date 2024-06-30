@@ -1,10 +1,12 @@
-#[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub enum TokenType {
     #[default]
     ILLEGAL,
     EOF,
     //identifiers + literals
-    IDENT, //add, foobar, x, y, ...
+    IDENT {
+        name: String,
+    }, //add, foobar, x, y, ...
     INT,
 
     //operators
@@ -37,10 +39,50 @@ pub enum TokenType {
     RETURN,
 }
 
+impl std::fmt::Display for TokenType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TokenType::ILLEGAL => write!(f, "ILLEGAL"),
+            TokenType::EOF => write!(f, "EOF"),
+            TokenType::IDENT { name } => write!(f, "IDENT, {}", name),
+            TokenType::INT => write!(f, "INT"),
+            TokenType::ASSIGN => write!(f, "ASSIGN"),
+            TokenType::PLUS => write!(f, "PLUS"),
+            TokenType::MINUS => write!(f, "MINUS"),
+            TokenType::BANG => write!(f, "BANG"),
+            TokenType::ASTERISK => write!(f, "ASTERISK"),
+            TokenType::SLASH => write!(f, "SLASH"),
+            TokenType::LT => write!(f, "LT"),
+            TokenType::GT => write!(f, "GT"),
+            TokenType::EQ => write!(f, "EQ"),
+            TokenType::NOT_EQ => write!(f, "NOT_EQ"),
+            TokenType::COMMA => write!(f, "COMMA"),
+            TokenType::SEMICOLON => write!(f, "SEMICOLON"),
+            TokenType::LPAREN => write!(f, "LPAREN"),
+            TokenType::RPAREN => write!(f, "RPAREN"),
+            TokenType::LBRACE => write!(f, "LBRACE"),
+            TokenType::RBRACE => write!(f, "RBRACE"),
+            TokenType::FUNCTION => write!(f, "FUNCTION"),
+            TokenType::LET => write!(f, "LET"),
+            TokenType::TRUE => write!(f, "TRUE"),
+            TokenType::FALSE => write!(f, "FALSE"),
+            TokenType::IF => write!(f, "IF"),
+            TokenType::ELSE => write!(f, "ELSE"),
+            TokenType::RETURN => write!(f, "RETURN"),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct Token {
     pub Literal: String,
     pub Type: TokenType,
+}
+
+impl std::fmt::Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}, {}", self.Type, self.Literal)
+    }
 }
 
 #[derive(Default)]
@@ -96,7 +138,9 @@ impl Lexer {
             "if" => TokenType::IF,
             "else" => TokenType::ELSE,
             "return" => TokenType::RETURN,
-            _ => TokenType::IDENT,
+            x => TokenType::IDENT {
+                name: x.to_string(),
+            },
         };
         return tok_type;
     }

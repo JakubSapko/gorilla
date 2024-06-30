@@ -1,7 +1,5 @@
-use std::default;
-
 use crate::{
-    ast::ast::{Expression, Identifier, LetStatement, Program, Statement, StatementNode},
+    ast::ast::{Expression, Identifier, LetStatement, Program, ReturnStatement, Statement},
     token::token::{Lexer, Token, TokenType},
 };
 
@@ -20,12 +18,12 @@ impl Parser<'_> {
 
     pub fn parse_program(&mut self) -> Program {
         let mut program = Program {
-            Statements: Vec::new(), // The type is now Vec<Box<dyn StatementNode>>
+            statements: Vec::new(), // The type is now Vec<Box<dyn StatementNode>>
         };
         while self.cur_token.Type != TokenType::EOF {
             let stmt = self.parse_statement();
             if let Some(s) = stmt {
-                program.Statements.push(s);
+                program.statements.push(s);
             }
             self.next_token();
         }
@@ -40,18 +38,45 @@ impl Parser<'_> {
                 }
                 return None;
             }
+            TokenType::RETURN => {
+                if let Some(stmt) = self.parse_return_statement() {
+                    return Some(Statement::Return(stmt));
+                }
+                return None;
+            }
             _ => return None,
         }
     }
 
+    pub fn parse_return_statement(&mut self) -> Option<ReturnStatement> {
+        let tok = &self.cur_token.clone();
+        self.next_token();
+        while !self.cur_token_is(TokenType::SEMICOLON) {
+            self.next_token();
+        }
+        let stmt = ReturnStatement {
+            token: tok.clone(),
+            return_value: Expression::Identifier(Identifier {
+                token: Token {
+                    Type: TokenType::RETURN,
+                    Literal: "".to_string(),
+                },
+                value: "".to_string(),
+            }),
+        };
+        Some(stmt)
+    }
+
     pub fn parse_let_statement(&mut self) -> Option<LetStatement> {
         let tok = &self.cur_token.clone();
-        if !self.expect_peek(TokenType::IDENT) {
+        if !self.expect_peek(TokenType::IDENT {
+            name: tok.to_string(),
+        }) {
             return None;
         }
         let id = Identifier {
-            Token: self.cur_token.clone(),
-            Value: self.cur_token.Literal.clone(),
+            token: self.cur_token.clone(),
+            value: self.cur_token.Literal.clone(),
         };
 
         if !self.expect_peek(TokenType::ASSIGN) {
@@ -61,17 +86,17 @@ impl Parser<'_> {
         while !self.cur_token_is(TokenType::SEMICOLON) {
             self.next_token();
         }
-        let val: Box<dyn Expression> = Box::new(Identifier {
-            Token: Token {
+        let val: Expression = Expression::Identifier(Identifier {
+            token: Token {
                 Type: TokenType::ILLEGAL,
                 Literal: "".to_string(),
             },
-            Value: "".to_string(),
+            value: "".to_string(),
         });
         let stmt = LetStatement {
-            Token: tok.clone(),
-            Name: id,
-            Value: val,
+            token: tok.clone(),
+            name: id,
+            value: val,
         };
         Some(stmt)
     }
